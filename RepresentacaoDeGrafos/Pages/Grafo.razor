@@ -1,0 +1,169 @@
+﻿@page "/grafo"
+
+<MensagemDeErro Mensagem="@MensagemDeErro"></MensagemDeErro>
+
+<div class="mb-4 p-3 border rounded">
+    <h5>Adicionar vértice</h5>
+
+    <EditForm Model="@vertice" OnValidSubmit="AdicionarVertice">
+        <DataAnnotationsValidator></DataAnnotationsValidator>
+
+        <div class="row g-3">
+            <div class="col-10">
+                <InputText class="form-control" placeholder="Identificador" aria-label="Identificador" @bind-Value="vertice.Identificador"></InputText>
+            </div>
+            <div class="col-2">
+                <input class="btn btn-outline-primary w-100" type="submit" value="Adicionar">
+            </div>
+        </div>
+    </EditForm>
+</div>
+
+<div class="mb-4 p-3 border rounded">
+    <h5>Adicionar aresta/arco</h5>
+
+    <EditForm Model="@aresta" OnValidSubmit="AdicionarAresta">
+        <DataAnnotationsValidator></DataAnnotationsValidator>
+
+        <div class="row g-3 mb-1">
+            <div class="col">
+                <InputText class="form-control" placeholder="Identificador" aria-label="Identificador" @bind-Value="aresta.Identificador"></InputText>
+            </div>
+            <div class="col">
+                <InputNumber class="form-control" placeholder="Custo" aria-label="Custo" @bind-Value="aresta.Custo"></InputNumber>
+            </div>
+            <div class="col-2 form-check">
+                <InputCheckbox class="form-check-input" type="checkbox" id="ehOrdenado" disabled="@EhGrafoOrdenado" @bind-Value="aresta.EhOrdenado"></InputCheckbox>
+                <label class="form-check-label" for="ehOrdenado">
+                    É ordenado (arco)
+                </label>
+            </div>
+        </div>
+        <div class="row g-3">
+            <div class="col">
+                <InputSelect class="form-control" aria-label="Antecessor" @bind-Value="AntecessorSelecionado">
+                    <option selected></option>
+                    @foreach (var vertice in Vertices)
+                    {
+                        <option value="@vertice.Identificador">@vertice.Identificador</option>
+                    }
+                </InputSelect>
+            </div>
+            <div class="col">
+                <InputSelect class="form-control" aria-label="Sucessor" @bind-Value="SucessorSelecionado">
+                    <option selected></option>
+                    @foreach (var vertice in Vertices)
+                    {
+                        <option value="@vertice.Identificador">@vertice.Identificador</option>
+                    }
+                </InputSelect>
+            </div>
+            <div class="col-2">
+                <input class="btn btn-outline-primary w-100" type="submit" value="Adicionar">
+            </div>
+        </div>
+    </EditForm>
+</div>
+
+<div>
+    <h3>
+        Testes:
+    </h3>
+    <p>
+        Vertices: @Vertices.Count [
+        @foreach (var v in Vertices)
+        {
+            <p class="m-0">
+                <b>Nome:</b> @v.Identificador
+            </p>
+        }
+        ]
+    </p>
+    <p>
+        Arestas: @Arestas.Count [
+        @foreach (var a in Arestas)
+        {
+            <p class="m-0">
+                <b>Nome:</b> @a.Identificador, <b>Custo:</b> @a.Custo, <b>@a.Antecessor.Identificador</b> para <b>@a.Sucessor.Identificador</b>, <b>Ordenado:</b> @a.EhOrdenado
+            </p>
+        }
+        ]
+    </p>
+</div>
+
+
+
+@code {
+    protected Vertice vertice;
+    protected Aresta aresta;
+
+    public string MensagemDeErro { get; set; }
+
+    public List<Vertice> Vertices { get; set; }
+
+    public List<Aresta> Arestas { get; set; }
+
+    public bool EhGrafoOrdenado => Arestas.Any(a => a.EhOrdenado);
+
+    public string AntecessorSelecionado
+    {
+        get => aresta.Antecessor?.Identificador;
+        set => aresta.Antecessor = Vertices.Single(v => v.Identificador == value);
+    }
+
+    public string SucessorSelecionado
+    {
+        get => aresta.Sucessor?.Identificador;
+        set => aresta.Sucessor = Vertices.Single(v => v.Identificador == value);
+    }
+
+
+    protected override void OnInitialized()
+    {
+        Arestas = new List<Aresta>();
+        Vertices = new List<Vertice>();
+
+        aresta = new Aresta();
+        vertice = new Vertice();
+
+        base.OnInitialized();
+    }
+
+    public void AdicionarVertice()
+    {
+        MensagemDeErro = string.Empty;
+
+        if (Vertices.Any(v => v.Identificador == vertice.Identificador))
+        {
+            MensagemDeErro = "Identificador já utilizado em outro vértice.";
+            return;
+        }
+
+        Vertices.Add(vertice);
+        vertice = new Vertice();
+        Renderizar();
+    }
+
+    public void AdicionarAresta()
+    {
+        MensagemDeErro = string.Empty;
+
+        if (Arestas.Any(a => a.Identificador == aresta.Identificador))
+        {
+            MensagemDeErro = "Identificador já utilizado em outra aresta.";
+            return;
+        }
+
+        Arestas.Add(aresta);
+        aresta = new Aresta()
+        {
+            EhOrdenado = EhGrafoOrdenado
+        };
+        Renderizar();
+    }
+
+    public void Renderizar()
+    {
+
+    }
+}

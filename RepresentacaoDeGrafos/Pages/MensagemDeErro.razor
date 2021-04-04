@@ -1,0 +1,7 @@
+﻿<div id="erroAresta" class="alert alert-danger fade show" role="alert" style="display: @(string.IsNullOrEmpty(Mensagem) ? "none" : "block")">
+    @Mensagem
+</div>
+
+@code {
+    [Parameter] public string Mensagem { get; set; }
+}
