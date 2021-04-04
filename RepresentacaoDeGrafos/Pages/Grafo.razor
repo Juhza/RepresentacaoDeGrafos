@@ -69,26 +69,80 @@
     <h3>
         Testes:
     </h3>
-    <p>
-        Vertices: @Vertices.Count [
-        @foreach (var v in Vertices)
-        {
-            <p class="m-0">
-                <b>Nome:</b> @v.Identificador
-            </p>
-        }
-        ]
-    </p>
-    <p>
-        Arestas: @Arestas.Count [
-        @foreach (var a in Arestas)
-        {
-            <p class="m-0">
-                <b>Nome:</b> @a.Identificador, <b>Custo:</b> @a.Custo, <b>@a.Antecessor.Identificador</b> para <b>@a.Sucessor.Identificador</b>, <b>Ordenado:</b> @a.EhOrdenado
-            </p>
-        }
-        ]
-    </p>
+    <div class="row">
+        <div class="col-4">
+            Vertices: @Vertices.Count
+            @foreach (var v in Vertices)
+            {
+                <p class="m-0">
+                    <b>Identificador:</b> @v.Identificador | <a class="text-danger" style="cursor:pointer" @onclick="() => ExcluirVertice(v)">Excluir</a>
+                </p>
+            }
+        </div>
+        <div class="col">
+            Arestas: @Arestas.Count
+            @foreach (var a in Arestas)
+            {
+                <p class="m-0">
+                    <b>Identificador:</b> @a.Identificador, <b>Custo:</b> @a.Custo, <b>Ordenado:</b> @a.EhOrdenado, de <b>@a.Antecessor.Identificador</b> para <b>@a.Sucessor.Identificador</b> |
+                    <a class="text-danger" style="cursor:pointer" @onclick="() => ExcluirAresta(a)">Excluir</a>
+                </p>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="row mt-5">
+    <div class="col-3">
+        <h4>
+            Vértices
+        </h4>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Identificador</th>
+                    <th>Excluir</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var v in Vertices)
+                {
+                    <tr>
+                        <td>@v.Identificador</td>
+                        <td><button class="btn btn-outline-danger btn-sm" @onclick="() => ExcluirVertice(v)">Excluir</button></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="col">
+        <h4>Arestas</h4>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Identificador</th>
+                    <th>Custo</th>
+                    <th>Antecessor</th>
+                    <th>Sucessor</th>
+                    <th>Ordenado</th>
+                    <th>Excluir</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Arestas)
+                {
+                    <tr>
+                        <td>@a.Identificador</td>
+                        <td>@a.Custo</td>
+                        <td>@a.Antecessor.Identificador</td>
+                        <td>@a.Sucessor.Identificador</td>
+                        <td>@a.EhOrdenado</td>
+                        <td><button class="btn btn-outline-danger btn-sm" @onclick="() => ExcluirAresta(a)">Excluir</button></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 </div>
 
 
@@ -141,6 +195,7 @@
 
         Vertices.Add(vertice);
         vertice = new Vertice();
+
         Renderizar();
     }
 
@@ -159,11 +214,23 @@
         {
             EhOrdenado = EhGrafoOrdenado
         };
+
         Renderizar();
     }
 
     public void Renderizar()
     {
 
+    }
+
+    public void ExcluirAresta(Aresta aresta)
+    {
+        Arestas.Remove(aresta);
+    }
+
+    public void ExcluirVertice(Vertice vertice)
+    {
+        Arestas.RemoveAll(a => a.Antecessor == vertice || a.Sucessor == vertice);
+        Vertices.Remove(vertice);
     }
 }
