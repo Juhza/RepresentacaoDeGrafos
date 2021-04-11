@@ -1,4 +1,5 @@
 ﻿@page "/grafo"
+@inject IJSRuntime js
 
 <MensagemDeErro Mensagem="@MensagemDeErro"></MensagemDeErro>
 
@@ -33,7 +34,7 @@
                 <InputNumber class="form-control" placeholder="Custo" aria-label="Custo" @bind-Value="aresta.Custo"></InputNumber>
             </div>
             <div class="col-2 form-check">
-                <InputCheckbox class="form-check-input" type="checkbox" id="ehOrdenado" disabled="@EhGrafoOrdenado" @bind-Value="aresta.EhOrdenado"></InputCheckbox>
+                <InputCheckbox class="form-check-input" type="checkbox" id="ehOrdenado" disabled="@(Arestas.Count > 0)" @bind-Value="aresta.EhOrdenado"></InputCheckbox>
                 <label class="form-check-label" for="ehOrdenado">
                     É ordenado (arco)
                 </label>
@@ -65,13 +66,50 @@
     </EditForm>
 </div>
 
+<div class="mb-4 p-3 border rounded">
+    <EditForm Model="@verticeInicial">
+        <DataAnnotationsValidator></DataAnnotationsValidator>
+
+        <div class="row g-3 mb-1">
+            <div class="col">
+                <InputSelect class="form-control" aria-label="Vertice inicial" @bind-Value="VerticeInicialSelecionado">
+                    <option selected></option>
+                    @foreach (var vertice in Vertices)
+                    {
+                        <option value="@vertice.Identificador">@vertice.Identificador</option>
+                    }
+                </InputSelect>
+            </div>
+        </div>
+        <div class="row g-3">
+            <div class="col">
+                <input class="btn btn-outline-primary w-100" type="submit" value="Busca em largura" @onclick="BuscarEmLargura">
+            </div>
+            <div class="col">
+                <input class="btn btn-outline-primary w-100" type="submit" value="Busca em profundidade" @onclick="BuscarEmProfundidade">
+            </div>
+            <div class="col">
+                <input class="btn btn-outline-primary w-100" type="submit" value="PRIM">
+            </div>
+            <div class="col">
+                <input class="btn btn-outline-primary w-100" type="submit" value="Roy">
+            </div>
+        </div>
+    </EditForm>
+
+    <div class="mt-2">
+        @Resultado
+    </div>
+</div>
+
+<div id="grafo"></div>
+
 <div>
-    <h3>
-        Testes:
-    </h3>
     <div class="row">
         <div class="col-4">
-            Vertices: @Vertices.Count
+            <h4>
+                Vertices: @Vertices.Count
+            </h4>
             @foreach (var v in Vertices)
             {
                 <p class="m-0">
@@ -80,7 +118,9 @@
             }
         </div>
         <div class="col">
-            Arestas: @Arestas.Count
+            <h4>
+                Arestas: @Arestas.Count
+            </h4>
             @foreach (var a in Arestas)
             {
                 <p class="m-0">
@@ -91,146 +131,3 @@
         </div>
     </div>
 </div>
-
-<div class="row mt-5">
-    <div class="col-3">
-        <h4>
-            Vértices
-        </h4>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Identificador</th>
-                    <th>Excluir</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var v in Vertices)
-                {
-                    <tr>
-                        <td>@v.Identificador</td>
-                        <td><button class="btn btn-outline-danger btn-sm" @onclick="() => ExcluirVertice(v)">Excluir</button></td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
-    <div class="col">
-        <h4>Arestas</h4>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Identificador</th>
-                    <th>Custo</th>
-                    <th>Antecessor</th>
-                    <th>Sucessor</th>
-                    <th>Ordenado</th>
-                    <th>Excluir</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var a in Arestas)
-                {
-                    <tr>
-                        <td>@a.Identificador</td>
-                        <td>@a.Custo</td>
-                        <td>@a.Antecessor.Identificador</td>
-                        <td>@a.Sucessor.Identificador</td>
-                        <td>@a.EhOrdenado</td>
-                        <td><button class="btn btn-outline-danger btn-sm" @onclick="() => ExcluirAresta(a)">Excluir</button></td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
-</div>
-
-
-
-@code {
-    protected Vertice vertice;
-    protected Aresta aresta;
-
-    public string MensagemDeErro { get; set; }
-
-    public List<Vertice> Vertices { get; set; }
-
-    public List<Aresta> Arestas { get; set; }
-
-    public bool EhGrafoOrdenado => Arestas.Any(a => a.EhOrdenado);
-
-    public string AntecessorSelecionado
-    {
-        get => aresta.Antecessor?.Identificador;
-        set => aresta.Antecessor = Vertices.Single(v => v.Identificador == value);
-    }
-
-    public string SucessorSelecionado
-    {
-        get => aresta.Sucessor?.Identificador;
-        set => aresta.Sucessor = Vertices.Single(v => v.Identificador == value);
-    }
-
-
-    protected override void OnInitialized()
-    {
-        Arestas = new List<Aresta>();
-        Vertices = new List<Vertice>();
-
-        aresta = new Aresta();
-        vertice = new Vertice();
-
-        base.OnInitialized();
-    }
-
-    public void AdicionarVertice()
-    {
-        MensagemDeErro = string.Empty;
-
-        if (Vertices.Any(v => v.Identificador == vertice.Identificador))
-        {
-            MensagemDeErro = "Identificador já utilizado em outro vértice.";
-            return;
-        }
-
-        Vertices.Add(vertice);
-        vertice = new Vertice();
-
-        Renderizar();
-    }
-
-    public void AdicionarAresta()
-    {
-        MensagemDeErro = string.Empty;
-
-        if (Arestas.Any(a => a.Identificador == aresta.Identificador))
-        {
-            MensagemDeErro = "Identificador já utilizado em outra aresta.";
-            return;
-        }
-
-        Arestas.Add(aresta);
-        aresta = new Aresta()
-        {
-            EhOrdenado = EhGrafoOrdenado
-        };
-
-        Renderizar();
-    }
-
-    public void Renderizar()
-    {
-
-    }
-
-    public void ExcluirAresta(Aresta aresta)
-    {
-        Arestas.Remove(aresta);
-    }
-
-    public void ExcluirVertice(Vertice vertice)
-    {
-        Arestas.RemoveAll(a => a.Antecessor == vertice || a.Sucessor == vertice);
-        Vertices.Remove(vertice);
-    }
-}

@@ -25,5 +25,7 @@ namespace RepresentacaoDeGrafos.Models
 
         [Required]
         public bool EhOrdenado { get; set; }
+
+        public bool FoiVisitada { get; set; }
     }
 }
