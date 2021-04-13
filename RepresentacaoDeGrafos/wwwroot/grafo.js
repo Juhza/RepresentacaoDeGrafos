@@ -21,6 +21,9 @@
             label: arestas[i].Identificador + ": " + arestas[i].Custo,
             from: arestas[i].Antecessor.Codigo,
             to: arestas[i].Sucessor.Codigo,
+            smooth: {
+                continuous
+            },
             arrows: {
                 to: {
                     enabled: ehOrdenado,
