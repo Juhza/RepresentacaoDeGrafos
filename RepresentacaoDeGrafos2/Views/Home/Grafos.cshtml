@@ -1,0 +1,128 @@
+﻿
+@{
+    ViewBag.Title = "Grafos";
+}
+
+<div class="mb-4 p-3 border rounded">
+    <h5>Adicionar vértice</h5>
+
+    <form asp-controller="Grafos" asp-action="AdicionarVertice" method="post" enctype="multipart/form-data">
+        <div class="row g-3">
+            <div class="col-10">
+                <input type="text" class="form-control" placeholder="Identificador" aria-label="Identificador" />
+            </div>
+            <div class="col-2">
+                <input class="btn btn-outline-primary w-100" type="submit" value="Adicionar">
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="mb-4 p-3 border rounded">
+    <h5>Adicionar aresta/arco</h5>
+
+    <form asp-controller="Grafos" asp-action="AdicionarAresta" method="post" enctype="multipart/form-data">
+        <div class="row g-3 mb-1">
+            <div class="col">
+                <input type="text" class="form-control" placeholder="Identificador" aria-label="Identificador" />
+            </div>
+            <div class="col">
+                <input type="number" class="form-control" placeholder="Custo" aria-label="Custo" />
+            </div>
+            <div class="col-2 form-check">
+                <InputCheckbox class="form-check-input" type="checkbox" id="ehOrdenado" disabled="@(Arestas.Count > 0)" @bind -Value="aresta.EhOrdenado"></InputCheckbox>
+                <input type="checkbox" class="form-check-input" id="ehOrdenado" />
+                <label class="form-check-label" for="ehOrdenado">
+                    É ordenado (arco)
+                </label>
+            </div>
+        </div>
+        <div class="row g-3">
+            <div class="col">
+                <select class="form-control" aria-label="Antecessor">
+                    <option selected></option>
+                    @foreach (var vertice in Vertices)
+                    {
+                        <option value="@vertice.Identificador">@vertice.Identificador</option>
+                    }
+                </select>
+            </div>
+            <div class="col">
+                <select class="form-control" aria-label="Sucessor">
+                    <option selected></option>
+                    @foreach (var vertice in Vertices)
+                    {
+                        <option value="@vertice.Identificador">@vertice.Identificador</option>
+                    }
+                </select>
+            </div>
+            <div class="col-2">
+                <input class="btn btn-outline-primary w-100" type="submit" value="Adicionar">
+            </div>
+        </div>
+        </form>
+</div>
+
+<div class="mb-4 p-3 border rounded">
+    <form asp-controller="Grafos" method="post" enctype="multipart/form-data">
+        <div class="row g-3 mb-1">
+            <div class="col">
+                <select class="form-control" aria-label="Vertice inicial">
+                    <option selected></option>
+                    @foreach (var vertice in Vertices)
+                    {
+                        <option value="@vertice.Identificador">@vertice.Identificador</option>
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="row g-3">
+            <div class="col">
+                <input class="btn btn-outline-primary w-100" type="submit" value="Busca em largura">
+            </div>
+            <div class="col">
+                <input class="btn btn-outline-primary w-100" type="submit" value="Busca em profundidade">
+            </div>
+            <div class="col">
+                <input class="btn btn-outline-primary w-100" type="submit" value="PRIM">
+            </div>
+            <div class="col">
+                <input class="btn btn-outline-primary w-100" type="submit" value="Roy">
+            </div>
+        </div>
+    </form>
+
+        <div class="mt-2">
+            @Resultado
+        </div>
+</div>
+
+<div id="grafo"></div>
+
+<div>
+    <div class="row">
+        <div class="col-4">
+            <h4>
+                Vertices: @Vertices.Count
+            </h4>
+            @foreach (var v in Vertices)
+            {
+                <p class="m-0">
+                    <b>Identificador:</b> @v.Identificador | <a class="text-danger" style="cursor:pointer">Excluir</a>
+                </p>
+            }
+        </div>
+        <div class="col">
+            <h4>
+                Arestas: @Arestas.Count
+            </h4>
+            @foreach (var a in Arestas)
+            {
+                <p class="m-0">
+                    <b>Identificador:</b> @a.Identificador, <b>Custo:</b> @a.Custo, <b>Ordenado:</b> @a.EhOrdenado, de <b>@a.Antecessor.Identificador</b> para <b>@a.Sucessor.Identificador</b> |
+                    <a class="text-danger" style="cursor:pointer">Excluir</a>
+                </p>
+            }
+        </div>
+    </div>
+</div>

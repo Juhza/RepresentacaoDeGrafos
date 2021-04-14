@@ -148,6 +148,8 @@ namespace RepresentacaoDeGrafos.Pages
 
             // 0 1 5 2 6 4 3
 
+            var count = 0;
+
             while (fila.Count > 0)
             {
                 fila.Remove(verticeAtual);
@@ -155,6 +157,7 @@ namespace RepresentacaoDeGrafos.Pages
 
                 foreach (var vertice in adjacentes)
                 {
+                    count++;
                     if (!marcados.Contains(vertice))
                     {
                         //explorar verticeInicial vertice
