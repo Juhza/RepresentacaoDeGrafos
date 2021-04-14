@@ -53,6 +53,10 @@ namespace RepresentacaoDeGrafos.Pages
             vertice = new Vertice();
             verticeInicial = new Vertice();
 
+            var teste = new TesteDeGrafo();
+            Vertices = teste.Vertices;
+            Arestas = teste.Arestas;
+
             base.OnInitialized();
         }
 
@@ -135,8 +139,14 @@ namespace RepresentacaoDeGrafos.Pages
         {
             var marcados = new List<Vertice>();
             var fila = new List<Vertice>();
+
             fila.Add(verticeAtual);
             marcados.Add(verticeAtual);
+            // para cada vertice
+            // buscar todos adjacentes e adicionar na fila
+            // proximo vertice = primeiro da fila
+
+            // 0 1 5 2 6 4 3
 
             while (fila.Count > 0)
             {
@@ -154,11 +164,11 @@ namespace RepresentacaoDeGrafos.Pages
                     else
                     {
                         // se vw não explorada, entao explorar vw
-                        var aresta = Arestas.Where(a => a.Antecessor == verticeAtual && a.Sucessor == vertice).FirstOrDefault();
+                        /*var aresta = Arestas.Where(a => a.Antecessor == verticeAtual && a.Sucessor == vertice).FirstOrDefault();
                         if (!aresta.FoiVisitada)
                         {
                             verticeAtual = aresta.Sucessor;
-                        }
+                        }*/
                     }
                 }
 
@@ -170,9 +180,25 @@ namespace RepresentacaoDeGrafos.Pages
 
         private Vertice[] ObterAdjacentes(Vertice vertice)
         {
-            var arestas = Arestas.Where(a => a.Antecessor.Codigo == vertice.Codigo).Select(a => a.Sucessor.Codigo).ToArray();
-            var adjacentes = Vertices.Where(v => arestas.Contains(v.Codigo));
-            return adjacentes.ToArray();
+            var todasAsArestas = Arestas
+                .Where(a => a.Antecessor.Codigo == vertice.Codigo || a.Sucessor.Codigo == vertice.Codigo);
+            var ehOrdenado = todasAsArestas
+                .FirstOrDefault()
+                .EhOrdenado;
+
+            if (ehOrdenado)
+            {
+                var codigosDosOrdenados = Arestas.Where(a => a.Antecessor.Codigo == vertice.Codigo).Select(a => a.Sucessor.Codigo).ToArray();
+                var adjacentesOrdenados = Vertices.Where(v => codigosDosOrdenados.Contains(v.Codigo)).ToArray();
+                return adjacentesOrdenados;
+            }
+             
+            var antecessores = Arestas.Where(a => a.Sucessor.Codigo == vertice.Codigo).Select(a => a.Antecessor.Codigo).ToArray();
+            var sucessores = Arestas.Where(a => a.Antecessor.Codigo == vertice.Codigo).Select(a => a.Sucessor.Codigo).ToArray();
+            var codigosDosNaoOrdenados = antecessores.Concat(sucessores).ToArray();
+            var adjacentesNaoOrdenados = Vertices.Where(v => codigosDosNaoOrdenados.Contains(v.Codigo) && v.Codigo != vertice.Codigo).ToArray();
+
+            return adjacentesNaoOrdenados;
         }
 
         public void BuscarEmProfundidade()
