@@ -57,7 +57,7 @@ namespace RepresentacaoDeGrafos.Pages
             verticeInicial = new Vertice();
 
             // remover para iniciar zerado
-            GerarDadosParaTeste();
+            // GerarDadosParaTeste();
 
             base.OnInitialized();
         }
