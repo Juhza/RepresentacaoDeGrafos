@@ -16,7 +16,7 @@
     }
 
     for (var i = 0; i < arestas.length; i++) {
-        var ehOrdenado = arestas[i].EhOrdenado;
+        var ehOrientado = arestas[i].EhOrientado;
         var aresta = {
             id: i,
             label: arestas[i].Identificador + ": " + arestas[i].Custo,
@@ -26,13 +26,13 @@
                 color: arestas[i].Cor
             },
             background: {
-                enabled: arestas[i].Cor == "#808988" ? false : true,
+                enabled: arestas[i].Cor == "#808988" || ehOrientado ? false : true,
                 size: 5, 
                 color: "#F2AC29"
             },
             arrows: {
                 to: {
-                    enabled: ehOrdenado,
+                    enabled: ehOrientado,
                     type: "normal"
                 }
             }
