@@ -13,7 +13,5 @@ namespace RepresentacaoDeGrafos.Models
         [Required]
         [MinLength(1)]
         public string Identificador { get; set; }
-
-        public bool FoiVisitado { get; set; }
     }
 }

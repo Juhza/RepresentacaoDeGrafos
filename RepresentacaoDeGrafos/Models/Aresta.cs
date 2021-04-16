@@ -24,8 +24,6 @@ namespace RepresentacaoDeGrafos.Models
         public int Custo { get; set; }
 
         [Required]
-        public bool EhOrdenado { get; set; }
-
-        public bool FoiVisitada { get; set; }
+        public bool EhOrientado { get; set; }
     }
 }

@@ -34,9 +34,9 @@
                 <InputNumber class="form-control" placeholder="Custo" aria-label="Custo" @bind-Value="aresta.Custo"></InputNumber>
             </div>
             <div class="col-2 form-check">
-                <InputCheckbox class="form-check-input" type="checkbox" id="ehOrdenado" disabled="@(Arestas.Count > 0)" @bind-Value="aresta.EhOrdenado"></InputCheckbox>
-                <label class="form-check-label" for="ehOrdenado">
-                    É ordenado (arco)
+                <InputCheckbox class="form-check-input" type="checkbox" id="ehOrientado" disabled="@(Arestas.Count > 0)" @bind-Value="aresta.EhOrientado"></InputCheckbox>
+                <label class="form-check-label" for="ehOrientado">
+                    É orientado (arco)
                 </label>
             </div>
         </div>
@@ -89,7 +89,7 @@
                 <input class="btn btn-outline-primary w-100" type="submit" value="Busca em profundidade" @onclick="BuscarEmProfundidade">
             </div>
             <div class="col">
-                <input class="btn btn-outline-primary w-100" type="submit" value="PRIM">
+                <input class="btn btn-outline-primary w-100" type="submit" value="PRIM" @onclick="PRIM">
             </div>
             <div class="col">
                 <input class="btn btn-outline-primary w-100" type="submit" value="Roy">
@@ -99,6 +99,7 @@
 
     <div class="mt-2">
         @Resultado
+        @VerticesPassados
     </div>
 </div>
 
@@ -124,7 +125,7 @@
             @foreach (var a in Arestas)
             {
                 <p class="m-0">
-                    <b>Identificador:</b> @a.Identificador, <b>Custo:</b> @a.Custo, <b>Ordenado:</b> @a.EhOrdenado, de <b>@a.Antecessor.Identificador</b> para <b>@a.Sucessor.Identificador</b> |
+                    <b>Identificador:</b> @a.Identificador, <b>Custo:</b> @a.Custo, <b>Orientado:</b> @a.EhOrientado, de <b>@a.Antecessor.Identificador</b> para <b>@a.Sucessor.Identificador</b> |
                     <a class="text-danger" style="cursor:pointer" @onclick="() => ExcluirAresta(a)">Excluir</a>
                 </p>
             }

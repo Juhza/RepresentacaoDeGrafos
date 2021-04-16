@@ -21,11 +21,13 @@ namespace RepresentacaoDeGrafos.Pages
 
         public string Resultado { get; set; }
 
+        public string VerticesPassados { get; set; }
+
         public List<Vertice> Vertices { get; set; }
 
         public List<Aresta> Arestas { get; set; }
 
-        public bool EhGrafoOrdenado => Arestas.Count > 0 && Arestas.Any(a => a.EhOrdenado);
+        public bool EhGrafoOrientado => Arestas.Count > 0 && Arestas.Any(a => a.EhOrientado);
 
         public string AntecessorSelecionado
         {
@@ -49,21 +51,47 @@ namespace RepresentacaoDeGrafos.Pages
         {
             Arestas = new List<Aresta>();
             Vertices = new List<Vertice>();
+
             aresta = new Aresta();
             vertice = new Vertice();
             verticeInicial = new Vertice();
 
-            var teste = new TesteDeGrafo();
-            Vertices = teste.Vertices;
-            Arestas = teste.Arestas;
+            // remover para iniciar zerado
+            GerarDadosParaTeste();
 
             base.OnInitialized();
+        }
+
+        private void GerarDadosParaTeste()
+        {
+            var mesaDeTestes = new TesteDeGrafo();
+
+            //teste.GerarGrafoParaBuscas(true);
+            //teste.GerarGrafoParaBuscas(false);
+            mesaDeTestes.GerarGrafoParaPrim();
+
+            Vertices = mesaDeTestes.Vertices;
+            Arestas = mesaDeTestes.Arestas;
         }
 
         protected override Task OnAfterRenderAsync(bool firstRender)
         {
             Renderizar();
             return base.OnAfterRenderAsync(firstRender);
+        }
+
+        public void Renderizar()
+        {
+            var verticesJson = JsonSerializer.Serialize(Vertices);
+            var arestasJson = JsonSerializer.Serialize(Arestas);
+            js.InvokeVoidAsync("desenharGrafo", verticesJson, arestasJson);
+        }
+
+        public void RenderizarPRIM()
+        {
+            var verticesJson = JsonSerializer.Serialize(Vertices);
+            var arestasJson = JsonSerializer.Serialize(Arestas);
+            js.InvokeVoidAsync("desenharGrafoComArestasDestacadas", verticesJson, arestasJson);
         }
 
         public void AdicionarVertice()
@@ -96,16 +124,9 @@ namespace RepresentacaoDeGrafos.Pages
             Arestas.Add(aresta);
             aresta = new Aresta()
             {
-                EhOrdenado = EhGrafoOrdenado
+                EhOrientado = EhGrafoOrientado
             };
             contagemDeArestas++;
-        }
-
-        public void Renderizar()
-        {
-            var verticesJson = JsonSerializer.Serialize(Vertices);
-            var arestasJson = JsonSerializer.Serialize(Arestas);
-            js.InvokeVoidAsync("desenharGrafo", verticesJson, arestasJson);
         }
 
         public void ExcluirAresta(Aresta aresta)
@@ -132,7 +153,7 @@ namespace RepresentacaoDeGrafos.Pages
 
             var buscaEmLargura = AplicarBuscaEmLargura(verticeInicial);
             var resultado = buscaEmLargura.Select(v => v.Identificador).ToArray();
-            Resultado = $"Busca em largura finalizada. Resultado: {string.Join(", ", resultado)}";
+            Resultado = $"Busca em largura finalizada. <strong>Resultado:</strong> {string.Join(", ", resultado)}";
         }
 
         public List<Vertice> AplicarBuscaEmLargura(Vertice verticeAtual)
@@ -142,13 +163,8 @@ namespace RepresentacaoDeGrafos.Pages
 
             fila.Add(verticeAtual);
             marcados.Add(verticeAtual);
-            // para cada vertice
-            // buscar todos adjacentes e adicionar na fila
-            // proximo vertice = primeiro da fila
 
-            // 0 1 5 2 6 4 3
-
-            var count = 0;
+            VerticesPassados = $"<br />Caminho: {verticeAtual.Identificador}";
 
             while (fila.Count > 0)
             {
@@ -157,21 +173,12 @@ namespace RepresentacaoDeGrafos.Pages
 
                 foreach (var vertice in adjacentes)
                 {
-                    count++;
+                    VerticesPassados += $" => {vertice.Identificador}";
+
                     if (!marcados.Contains(vertice))
                     {
-                        //explorar verticeInicial vertice
                         fila.Add(vertice);
                         marcados.Add(vertice);
-                    }
-                    else
-                    {
-                        // se vw não explorada, entao explorar vw
-                        /*var aresta = Arestas.Where(a => a.Antecessor == verticeAtual && a.Sucessor == vertice).FirstOrDefault();
-                        if (!aresta.FoiVisitada)
-                        {
-                            verticeAtual = aresta.Sucessor;
-                        }*/
                     }
                 }
 
@@ -185,23 +192,20 @@ namespace RepresentacaoDeGrafos.Pages
         {
             var todasAsArestas = Arestas
                 .Where(a => a.Antecessor.Codigo == vertice.Codigo || a.Sucessor.Codigo == vertice.Codigo);
-            var ehOrdenado = todasAsArestas
-                .FirstOrDefault()
-                .EhOrdenado;
 
-            if (ehOrdenado)
+            if (EhGrafoOrientado)
             {
-                var codigosDosOrdenados = Arestas.Where(a => a.Antecessor.Codigo == vertice.Codigo).Select(a => a.Sucessor.Codigo).ToArray();
-                var adjacentesOrdenados = Vertices.Where(v => codigosDosOrdenados.Contains(v.Codigo)).ToArray();
-                return adjacentesOrdenados;
+                var codigosDosVerticesOrientados = Arestas.Where(a => a.Antecessor.Codigo == vertice.Codigo).Select(a => a.Sucessor.Codigo).ToArray();
+                var verticesAdjacentesOrientados = Vertices.Where(v => codigosDosVerticesOrientados.Contains(v.Codigo)).ToArray();
+                return verticesAdjacentesOrientados;
             }
              
             var antecessores = Arestas.Where(a => a.Sucessor.Codigo == vertice.Codigo).Select(a => a.Antecessor.Codigo).ToArray();
             var sucessores = Arestas.Where(a => a.Antecessor.Codigo == vertice.Codigo).Select(a => a.Sucessor.Codigo).ToArray();
-            var codigosDosNaoOrdenados = antecessores.Concat(sucessores).ToArray();
-            var adjacentesNaoOrdenados = Vertices.Where(v => codigosDosNaoOrdenados.Contains(v.Codigo) && v.Codigo != vertice.Codigo).ToArray();
+            var codigosDosNaoOrientados = antecessores.Concat(sucessores).ToArray();
+            var adjacentesNaoOrientados = Vertices.Where(v => codigosDosNaoOrientados.Contains(v.Codigo) && v.Codigo != vertice.Codigo).ToArray();
 
-            return adjacentesNaoOrdenados;
+            return adjacentesNaoOrientados;
         }
 
         public void BuscarEmProfundidade()
@@ -218,7 +222,7 @@ namespace RepresentacaoDeGrafos.Pages
             var marcados = new List<Vertice>();
             var buscaEmProfundidade = AplicarBuscaEmProfundidade(verticeInicial, marcados);
             var resultado = buscaEmProfundidade.Select(v => v.Identificador).ToArray();
-            Resultado = $"Busca em profundidade finalizada. Resultado: {string.Join(", ", resultado)}";
+            Resultado = $"Busca em profundidade finalizada. <strong>Resultado:</strong> {string.Join(", ", resultado)}";
         }
 
         public List<Vertice> AplicarBuscaEmProfundidade(Vertice verticeAtual, List<Vertice> marcados)
@@ -226,8 +230,12 @@ namespace RepresentacaoDeGrafos.Pages
             marcados.Add(verticeAtual);
             var adjacentes = ObterAdjacentes(verticeAtual);
 
+            VerticesPassados = $"<br />Caminho: {verticeAtual.Identificador}";
+
             foreach (var vertice in adjacentes)
             {
+                VerticesPassados += $" => {vertice.Identificador}";
+
                 if (!marcados.Contains(vertice))
                 {
                     marcados = AplicarBuscaEmProfundidade(vertice, marcados);
@@ -237,9 +245,62 @@ namespace RepresentacaoDeGrafos.Pages
             return marcados;
         }
 
-        public void AplicarAlgoritmoDeRoy(Vertice verticeInicial)
+        public void PRIM()
         {
+            MensagemDeErro = string.Empty;
 
+            if (EhGrafoOrientado)
+            {
+                MensagemDeErro = "Impossivel aplicar o algoritmo de PRIM em grafos orientados.";
+                return;
+            }
+
+            var verticeInicial = string.IsNullOrEmpty(VerticeInicialSelecionado) 
+                ? Vertices.FirstOrDefault()
+                : Vertices.FirstOrDefault(v => v.Identificador == VerticeInicialSelecionado);
+
+            var resultado = AplicarPRIM(verticeInicial);
+            var nomes = resultado.Select(v => v.Identificador).ToArray();
+            var custoTotal = 0;
+
+            foreach (var aresta in resultado)
+            {
+                custoTotal += aresta.Custo;
+            }
+
+            Resultado = $"Algoritmo de PRIM finalizado. <strong>Resultado:</strong> arestas [ {string.Join(", ", nomes)} ] com custo total {custoTotal}";
+
+            //renderizar colorido?
+        }
+
+        private List<Aresta> AplicarPRIM(Vertice verticeInicial)
+        {
+            var resultado = new List<Aresta>();
+            var arestasAdjacentes = ObterArestasAdjacentes(verticeInicial);
+            var arestaDeMenorCusto = arestasAdjacentes.First();
+            resultado.Add(arestaDeMenorCusto);
+
+            foreach (var vertice in Vertices)
+            {
+                if (!vertice.Codigo.Equals(verticeInicial.Codigo))
+                {
+                    arestasAdjacentes = ObterArestasAdjacentes(vertice);
+                    arestaDeMenorCusto = arestasAdjacentes.First();
+
+                    if (!resultado.Contains(arestaDeMenorCusto))
+                        resultado.Add(arestaDeMenorCusto);
+                }
+            }
+
+            return resultado;
+        }
+
+        private List<Aresta> ObterArestasAdjacentes(Vertice vertice)
+        {
+            return Arestas
+                .Where(a => a.Sucessor == vertice || a.Antecessor == vertice)
+                .OrderBy(a => a.Custo)
+                .ToList();
         }
     }
 }
