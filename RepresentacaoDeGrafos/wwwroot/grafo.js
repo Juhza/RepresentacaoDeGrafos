@@ -9,7 +9,8 @@
         var vertice = {
             id: vertices[i].Codigo,
             label: vertices[i].Identificador,
-            color: "#FFA807"
+            color: "#3B413F",
+            font: { color: "white" }
         };
         dadosDosVertices.push(vertice);
     }
@@ -21,6 +22,14 @@
             label: arestas[i].Identificador + ": " + arestas[i].Custo,
             from: arestas[i].Antecessor.Codigo,
             to: arestas[i].Sucessor.Codigo,
+            color: {
+                color: arestas[i].Cor
+            },
+            background: {
+                enabled: arestas[i].Cor == "#808988" ? false : true,
+                size: 5, 
+                color: "#F2AC29"
+            },
             arrows: {
                 to: {
                     enabled: ehOrdenado,
@@ -55,7 +64,7 @@
         },
         edges: {
             smooth: {
-                type: "horizontal"
+                type: "continuous"
             }
         }
     };

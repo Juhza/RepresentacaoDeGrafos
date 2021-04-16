@@ -87,13 +87,6 @@ namespace RepresentacaoDeGrafos.Pages
             js.InvokeVoidAsync("desenharGrafo", verticesJson, arestasJson);
         }
 
-        public void RenderizarPRIM()
-        {
-            var verticesJson = JsonSerializer.Serialize(Vertices);
-            var arestasJson = JsonSerializer.Serialize(Arestas);
-            js.InvokeVoidAsync("desenharGrafoComArestasDestacadas", verticesJson, arestasJson);
-        }
-
         public void AdicionarVertice()
         {
             MensagemDeErro = string.Empty;
@@ -147,13 +140,14 @@ namespace RepresentacaoDeGrafos.Pages
 
             if (verticeInicial == null)
             {
-                MensagemDeErro = "Nenhum vertice selecionado.";
+                MensagemDeErro = "Nenhum vértice selecionado.";
                 return;
             }
 
             var buscaEmLargura = AplicarBuscaEmLargura(verticeInicial);
             var resultado = buscaEmLargura.Select(v => v.Identificador).ToArray();
-            Resultado = $"Busca em largura finalizada. <strong>Resultado:</strong> {string.Join(", ", resultado)}";
+            Resultado = $"Busca em largura finalizada. Resultado: {string.Join(", ", resultado)}";
+            ColorirArestas();
         }
 
         public List<Vertice> AplicarBuscaEmLargura(Vertice verticeAtual)
@@ -164,7 +158,7 @@ namespace RepresentacaoDeGrafos.Pages
             fila.Add(verticeAtual);
             marcados.Add(verticeAtual);
 
-            VerticesPassados = $"<br />Caminho: {verticeAtual.Identificador}";
+            VerticesPassados = $"\r\nCaminho: {verticeAtual.Identificador}";
 
             while (fila.Count > 0)
             {
@@ -215,14 +209,15 @@ namespace RepresentacaoDeGrafos.Pages
 
             if (verticeInicial == null)
             {
-                MensagemDeErro = "Nenhum vertice selecionado.";
+                MensagemDeErro = "Nenhum vértice selecionado.";
                 return;
             }
 
             var marcados = new List<Vertice>();
             var buscaEmProfundidade = AplicarBuscaEmProfundidade(verticeInicial, marcados);
             var resultado = buscaEmProfundidade.Select(v => v.Identificador).ToArray();
-            Resultado = $"Busca em profundidade finalizada. <strong>Resultado:</strong> {string.Join(", ", resultado)}";
+            Resultado = $"Busca em profundidade finalizada. Resultado: {string.Join(", ", resultado)}";
+            ColorirArestas();
         }
 
         public List<Vertice> AplicarBuscaEmProfundidade(Vertice verticeAtual, List<Vertice> marcados)
@@ -230,7 +225,7 @@ namespace RepresentacaoDeGrafos.Pages
             marcados.Add(verticeAtual);
             var adjacentes = ObterAdjacentes(verticeAtual);
 
-            VerticesPassados = $"<br />Caminho: {verticeAtual.Identificador}";
+            VerticesPassados = $"\r\nCaminho: {verticeAtual.Identificador}";
 
             foreach (var vertice in adjacentes)
             {
@@ -248,10 +243,11 @@ namespace RepresentacaoDeGrafos.Pages
         public void PRIM()
         {
             MensagemDeErro = string.Empty;
+            VerticesPassados = string.Empty;
 
             if (EhGrafoOrientado)
             {
-                MensagemDeErro = "Impossivel aplicar o algoritmo de PRIM em grafos orientados.";
+                MensagemDeErro = "Impossível aplicar o algoritmo de PRIM em grafos orientados.";
                 return;
             }
 
@@ -268,9 +264,8 @@ namespace RepresentacaoDeGrafos.Pages
                 custoTotal += aresta.Custo;
             }
 
-            Resultado = $"Algoritmo de PRIM finalizado. <strong>Resultado:</strong> arestas [ {string.Join(", ", nomes)} ] com custo total {custoTotal}";
-
-            //renderizar colorido?
+            Resultado = $"Algoritmo de PRIM finalizado. Custo total: {custoTotal}";
+            ColorirArestas(resultado);
         }
 
         private List<Aresta> AplicarPRIM(Vertice verticeInicial)
@@ -301,6 +296,18 @@ namespace RepresentacaoDeGrafos.Pages
                 .Where(a => a.Sucessor == vertice || a.Antecessor == vertice)
                 .OrderBy(a => a.Custo)
                 .ToList();
+        }
+
+        private void ColorirArestas(List<Aresta> arestas = null)
+        {
+            Arestas.ForEach(a => a.Cor = "#808988");
+
+            if (arestas == null) return;
+
+            foreach (var arestaColorida in arestas)
+            {
+                Arestas.Find(a => a.Codigo == arestaColorida.Codigo).Cor = "#F2AC29";
+            }
         }
     }
 }

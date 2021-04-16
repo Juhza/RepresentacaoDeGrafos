@@ -25,5 +25,7 @@ namespace RepresentacaoDeGrafos.Models
 
         [Required]
         public bool EhOrientado { get; set; }
+
+        public string Cor { get; set; } = "#808988";
     }
 }

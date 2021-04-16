@@ -1,5 +1,4 @@
-﻿@page "/grafo"
-@inject IJSRuntime js
+﻿@inject IJSRuntime js
 
 <MensagemDeErro Mensagem="@MensagemDeErro"></MensagemDeErro>
 
@@ -14,7 +13,7 @@
                 <InputText class="form-control" placeholder="Identificador" aria-label="Identificador" @bind-Value="vertice.Identificador"></InputText>
             </div>
             <div class="col-2">
-                <input class="btn btn-outline-primary w-100" type="submit" value="Adicionar">
+                <input class="btn btn-outline-dark w-100" type="submit" value="Adicionar">
             </div>
         </div>
     </EditForm>
@@ -60,7 +59,7 @@
                 </InputSelect>
             </div>
             <div class="col-2">
-                <input class="btn btn-outline-primary w-100" type="submit" value="Adicionar">
+                <input class="btn btn-outline-dark w-100" type="submit" value="Adicionar">
             </div>
         </div>
     </EditForm>
@@ -81,35 +80,38 @@
                 </InputSelect>
             </div>
         </div>
-        <div class="row g-3">
+        <div class="row g-3" id="botoes">
             <div class="col">
-                <input class="btn btn-outline-primary w-100" type="submit" value="Busca em largura" @onclick="BuscarEmLargura">
+                <input class="btn btn-outline-dark w-100" type="submit" value="Busca em largura" @onclick="BuscarEmLargura">
             </div>
             <div class="col">
-                <input class="btn btn-outline-primary w-100" type="submit" value="Busca em profundidade" @onclick="BuscarEmProfundidade">
+                <input class="btn btn-outline-dark w-100" type="submit" value="Busca em profundidade" @onclick="BuscarEmProfundidade">
             </div>
             <div class="col">
-                <input class="btn btn-outline-primary w-100" type="submit" value="PRIM" @onclick="PRIM">
+                <input class="btn btn-outline-dark w-100" type="submit" value="PRIM" @onclick="PRIM">
             </div>
             <div class="col">
-                <input class="btn btn-outline-primary w-100" type="submit" value="Roy">
+                <input class="btn btn-outline-dark w-100 disabled" disabled type="submit" value="Roy">
             </div>
         </div>
     </EditForm>
 
     <div class="mt-2">
         @Resultado
+        <br />
         @VerticesPassados
     </div>
 </div>
 
-<div id="grafo"></div>
+<div class="w-100 d-flex justify-content-center">
+    <div id="grafo"></div>
+</div>
 
 <div>
     <div class="row">
         <div class="col-4">
             <h4>
-                Vertices: @Vertices.Count
+                Quantidade de vértices: @Vertices.Count
             </h4>
             @foreach (var v in Vertices)
             {
@@ -120,7 +122,7 @@
         </div>
         <div class="col">
             <h4>
-                Arestas: @Arestas.Count
+                Quantidade de arestas: @Arestas.Count
             </h4>
             @foreach (var a in Arestas)
             {

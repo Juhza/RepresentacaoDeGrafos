@@ -5,8 +5,6 @@ VisualStudioVersion = 16.0.31019.35
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RepresentacaoDeGrafos", "RepresentacaoDeGrafos\RepresentacaoDeGrafos.csproj", "{5A7808F7-1FFD-4481-B09A-ECF57B0F553E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RepresentacaoDeGrafos2", "RepresentacaoDeGrafos2\RepresentacaoDeGrafos2.csproj", "{C8EB1B7A-BA46-4D7F-8798-29EADE5A30AC}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -17,10 +15,6 @@ Global
 		{5A7808F7-1FFD-4481-B09A-ECF57B0F553E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5A7808F7-1FFD-4481-B09A-ECF57B0F553E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5A7808F7-1FFD-4481-B09A-ECF57B0F553E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C8EB1B7A-BA46-4D7F-8798-29EADE5A30AC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C8EB1B7A-BA46-4D7F-8798-29EADE5A30AC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C8EB1B7A-BA46-4D7F-8798-29EADE5A30AC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C8EB1B7A-BA46-4D7F-8798-29EADE5A30AC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
