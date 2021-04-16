@@ -130,12 +130,12 @@ namespace RepresentacaoDeGrafos.Pages
                 return;
             }
 
-            var buscaEmLargura = RealizarBuscaEmLargura(verticeInicial);
+            var buscaEmLargura = AplicarBuscaEmLargura(verticeInicial);
             var resultado = buscaEmLargura.Select(v => v.Identificador).ToArray();
             Resultado = $"Busca em largura finalizada. Resultado: {string.Join(", ", resultado)}";
         }
 
-        public List<Vertice> RealizarBuscaEmLargura(Vertice verticeAtual)
+        public List<Vertice> AplicarBuscaEmLargura(Vertice verticeAtual)
         {
             var marcados = new List<Vertice>();
             var fila = new List<Vertice>();
@@ -216,12 +216,12 @@ namespace RepresentacaoDeGrafos.Pages
             }
 
             var marcados = new List<Vertice>();
-            var buscaEmProfundidade = RealizarBuscaEmProfundidade(verticeInicial, marcados);
+            var buscaEmProfundidade = AplicarBuscaEmProfundidade(verticeInicial, marcados);
             var resultado = buscaEmProfundidade.Select(v => v.Identificador).ToArray();
             Resultado = $"Busca em profundidade finalizada. Resultado: {string.Join(", ", resultado)}";
         }
 
-        public List<Vertice> RealizarBuscaEmProfundidade(Vertice verticeAtual, List<Vertice> marcados)
+        public List<Vertice> AplicarBuscaEmProfundidade(Vertice verticeAtual, List<Vertice> marcados)
         {
             marcados.Add(verticeAtual);
             var adjacentes = ObterAdjacentes(verticeAtual);
@@ -230,7 +230,7 @@ namespace RepresentacaoDeGrafos.Pages
             {
                 if (!marcados.Contains(vertice))
                 {
-                    marcados = RealizarBuscaEmProfundidade(vertice, marcados);
+                    marcados = AplicarBuscaEmProfundidade(vertice, marcados);
                 }
             }
 
