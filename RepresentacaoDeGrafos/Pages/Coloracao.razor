@@ -1,0 +1,148 @@
+﻿@inject IJSRuntime js
+
+<MensagemDeErro Mensagem="@MensagemDeErro"></MensagemDeErro>
+
+<div class="mb-4 p-3 border rounded">
+    <h5>Adicionar cidade</h5>
+
+    <EditForm Model="@cidade" OnValidSubmit="AdicionarCidade">
+        <DataAnnotationsValidator></DataAnnotationsValidator>
+
+        <div class="row g-3 mb-2">
+            <div class="col">
+                <InputText class="form-control" placeholder="Identificador" aria-label="Identificador" @bind-Value="cidade.Identificador"></InputText>
+            </div>
+        </div>
+        <div class="row g-3">
+            <div class="col-5">
+                <InputNumber class="form-control" placeholder="Latitude" aria-label="Latitude" @bind-Value="cidade.Latitude"></InputNumber>
+            </div>
+            <div class="col-5">
+                <InputNumber class="form-control" placeholder="Longitude" aria-label="Longitude" @bind-Value="cidade.Longitude"></InputNumber>
+            </div>
+            <div class="col">
+                <input class="btn btn-outline-dark w-100" type="submit" value="Adicionar">
+            </div>
+        </div>
+    </EditForm>
+</div>
+
+<div class="mb-4 p-3 border rounded">
+    <h5>Ligar cidades</h5>
+
+    <EditForm Model="@ligacao" OnValidSubmit="AdicionarLigacaoEntreCidades">
+        <DataAnnotationsValidator></DataAnnotationsValidator>
+
+        <div class="row g-3">
+            <div class="col">
+                <InputSelect class="form-control" aria-label="Antecessor" @bind-Value="AntecessorSelecionado">
+                    <option selected></option>
+                    @foreach (var cidade in Cidades)
+                    {
+                        <option value="@cidade.Identificador">@cidade.Identificador</option>
+                    }
+                </InputSelect>
+            </div>
+            <div class="col">
+                <InputSelect class="form-control" aria-label="Sucessor" @bind-Value="SucessorSelecionado">
+                    <option selected></option>
+                    @foreach (var cidade in Cidades)
+                    {
+                        <option value="@cidade.Identificador">@cidade.Identificador</option>
+                    }
+                </InputSelect>
+            </div>
+            <div class="col-2">
+                <input class="btn btn-outline-dark w-100" type="submit" value="Adicionar">
+            </div>
+        </div>
+    </EditForm>
+</div>
+
+<div class="mb-4 p-3 border rounded">
+    <EditForm Model="@cidadeInicial">
+        <DataAnnotationsValidator></DataAnnotationsValidator>
+
+        <div class="row g-1">
+            <div class="col">
+                <InputSelect class="form-control" aria-label="Cidade origem" @oninput="@RecalcularDistanciasManhattan" @bind-Value="CidadeInicial">
+                    <option selected>Cidade origem</option>
+                    @foreach (var cidade in Cidades)
+                    {
+                        <option value="@cidade.Identificador">@cidade.Identificador</option>
+                    }
+                </InputSelect>
+            </div>
+            <div class="col">
+                <InputSelect class="form-control" aria-label="Cidade destino" @bind-Value="CidadeFinal">
+                    <option selected>Cidade destino</option>
+                    @foreach (var cidade in Cidades)
+                    {
+                        <option value="@cidade.Identificador">@cidade.Identificador</option>
+                    }
+                </InputSelect>
+            </div>
+            <div class="col-2" id="botoes">
+                <input class="btn btn-outline-dark w-100" type="submit" value="A* para caminhos mínimos" @onclick="@ExecutarAlgoritmoAStarParaCaminhosMinimos">
+            </div>
+        </div>
+    </EditForm>
+</div>
+
+<div class="mb-4 p-3 border rounded">
+    <EditForm Model="@cidadeInicial">
+        <DataAnnotationsValidator></DataAnnotationsValidator>
+
+        <div class="row g-1">
+            <div class="col">
+                <InputSelect class="form-control" aria-label="Cidade origem" @oninput="@RecalcularDistanciasManhattan" @bind-Value="CidadeInicial">
+                    <option selected>Cidade origem</option>
+                    @foreach (var cidade in Cidades)
+                    {
+                        <option value="@cidade.Identificador">@cidade.Identificador</option>
+                    }
+                </InputSelect>
+            </div>
+            <div class="col-2" id="botoes">
+                <input class="btn btn-outline-dark w-100" type="submit" value="Welsh-Powell" @onclick="@ExecutarAlgoritmoDeWelshPowell">
+            </div>
+        </div>
+    </EditForm>
+</div>
+
+<div class="w-100 d-flex justify-content-center">
+    <div id="grafo"></div>
+</div>
+
+<div class="w-100 d-flex justify-content-center">
+    <h5>Resultado: @Resultado</h5>
+</div>
+
+<div>
+    <div class="row">
+        <div class="col-5">
+            <h4>
+                Quantidade de cidades: @Cidades.Count
+            </h4>
+            @foreach (var c in Cidades)
+            {
+                <p class="m-0">
+                    <b>@c.Identificador</b>, @c.Latitude @c.Longitude, distância Manhattan: @c.DistanciaManhattan | 
+                    <a class="text-danger" style="cursor:pointer" @onclick="() => ExcluirCidade(c)">Excluir</a>
+                </p>
+            }
+        </div>
+        <div class="col">
+            <h4>
+                Quantidade de ligações: @Distancias.Count
+            </h4>
+            @foreach (var d in Distancias)
+            {
+                <p class="m-0">
+                    De <b>@d.Origem.Identificador</b> para <b>@d.Destino.Identificador</b>, valor: @d.Custo |
+                    <a class="text-danger" style="cursor:pointer" @onclick="() => ExcluirLigacaoEntreCidades(d)">Excluir</a>
+                </p>
+            }
+        </div>
+    </div>
+</div>

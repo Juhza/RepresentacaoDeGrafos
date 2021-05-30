@@ -11,10 +11,16 @@ namespace RepresentacaoDeGrafos.Models
 
         public List<Aresta> Arestas { get; set; }
 
+        public List<Distancia> Distancias { get; set; }
+
+        public List<Cidade> Cidades { get; set; }
+
         public TesteDeGrafo()
         {
             Vertices = new List<Vertice>();
             Arestas = new List<Aresta>();
+            Cidades = new List<Cidade>();
+            Distancias = new List<Distancia>();
         }
 
         public void GerarGrafoParaBuscas(bool ehOrientado)
@@ -274,6 +280,219 @@ namespace RepresentacaoDeGrafos.Models
             Arestas.Add(aresta6);
             Arestas.Add(aresta7);
             Arestas.Add(aresta8);
+        }
+
+        public void GerarGrafoEstadoDoParana()
+        {
+            var curitiba = new Cidade()
+            {
+                Codigo = 0,
+                Identificador = "Curitiba",
+                Latitude = -25.4284,
+                Longitude = -49.2733
+            };
+
+            var paranagua = new Cidade()
+            {
+                Codigo = 1,
+                Identificador = "Paranaguá",
+                Latitude = -25.5205,
+                Longitude = -48.5095
+            };
+
+            var pontaGrossa = new Cidade()
+            {
+                Codigo = 2,
+                Identificador = "Ponta Grossa",
+                Latitude = -25.0945,
+                Longitude = -50.1633
+            };
+
+            var londrina = new Cidade()
+            {
+                Codigo = 3,
+                Identificador = "Londrina",
+                Latitude = -23.2927,
+                Longitude = -51.1732
+            };
+
+            var maringa = new Cidade()
+            {
+                Codigo = 4,
+                Identificador = "Maringá",
+                Latitude = -23.4273,
+                Longitude = -51.9375
+            };
+
+            var umuarama = new Cidade()
+            {
+                Codigo = 5,
+                Identificador = "Umuarama",
+                Latitude = -23.7641,
+                Longitude = -53.3184
+            };
+
+            var toledo = new Cidade()
+            {
+                Codigo = 6,
+                Identificador = "Toledo",
+                Latitude = -24.7199,
+                Longitude = -53.7433
+            };
+
+            var cascavel = new Cidade()
+            {
+                Codigo = 7,
+                Identificador = "Cascavel",
+                Latitude = -24.9555,
+                Longitude = -53.4552
+            };
+
+            var fozDoIguacu = new Cidade()
+            {
+                Codigo = 8,
+                Identificador = "Foz do Iguaçu",
+                Latitude = -25.5469,
+                Longitude = -54.5882
+            };
+
+            var guarapuava = new Cidade()
+            {
+                Codigo = 9,
+                Identificador = "Guarapuava",
+                Latitude = -25.3935,
+                Longitude = -51.4562
+            };
+
+            var franciscoBeltrao = new Cidade()
+            {
+                Codigo = 10,
+                Identificador = "Francisco Beltrão",
+                Latitude = -26.0783,
+                Longitude = -53.0531
+            };
+
+            var saoMateusDoSul = new Cidade()
+            {
+                Codigo = 11,
+                Identificador = "São Mateus do Sul",
+                Latitude = -25.8767,
+                Longitude = -50.3842
+            };
+
+            Cidades.Add(curitiba);
+            Cidades.Add(paranagua);
+            Cidades.Add(pontaGrossa);
+            Cidades.Add(londrina);
+            Cidades.Add(maringa);
+            Cidades.Add(umuarama);
+            Cidades.Add(toledo);
+            Cidades.Add(cascavel);
+            Cidades.Add(fozDoIguacu);
+            Cidades.Add(guarapuava);
+            Cidades.Add(franciscoBeltrao);
+            Cidades.Add(saoMateusDoSul);
+
+            var ligacao0 = new Distancia()
+            {
+                Origem = curitiba,
+                Destino = paranagua
+            };
+
+            var ligacao1 = new Distancia()
+            {
+                Origem = curitiba,
+                Destino = pontaGrossa
+            };
+
+            var ligacao2 = new Distancia()
+            {
+                Origem = pontaGrossa,
+                Destino = londrina
+            };
+
+            var ligacao3 = new Distancia()
+            {
+                Origem = pontaGrossa,
+                Destino = maringa
+            };
+
+            var ligacao4 = new Distancia()
+            {
+                Origem = pontaGrossa,
+                Destino = guarapuava
+            };
+
+            var ligacao5 = new Distancia()
+            {
+                Origem = londrina,
+                Destino = maringa
+            };
+
+            var ligacao6 = new Distancia()
+            {
+                Origem = maringa,
+                Destino = umuarama
+            };
+
+            var ligacao7 = new Distancia()
+            {
+                Origem = umuarama,
+                Destino = toledo
+            };
+
+            var ligacao8 = new Distancia()
+            {
+                Origem = toledo,
+                Destino = cascavel
+            };
+
+            var ligacao9 = new Distancia()
+            {
+                Origem = cascavel,
+                Destino = fozDoIguacu
+            };
+
+
+            var ligacao10 = new Distancia()
+            {
+                Origem = cascavel,
+                Destino = guarapuava
+            };
+
+
+            var ligacao11 = new Distancia()
+            {
+                Origem = cascavel,
+                Destino = franciscoBeltrao
+            };
+
+            var ligacao12 = new Distancia()
+            {
+                Origem = franciscoBeltrao,
+                Destino = saoMateusDoSul
+            };
+
+            var ligacao13 = new Distancia()
+            {
+                Origem = saoMateusDoSul,
+                Destino = curitiba
+            };
+
+            Distancias.Add(ligacao0);
+            Distancias.Add(ligacao1);
+            Distancias.Add(ligacao2);
+            Distancias.Add(ligacao3);
+            Distancias.Add(ligacao4);
+            Distancias.Add(ligacao5);
+            Distancias.Add(ligacao6);
+            Distancias.Add(ligacao7);
+            Distancias.Add(ligacao8);
+            Distancias.Add(ligacao9);
+            Distancias.Add(ligacao10);
+            Distancias.Add(ligacao11);
+            Distancias.Add(ligacao12);
+            Distancias.Add(ligacao13);
         }
     }
 }

@@ -40,13 +40,145 @@
         dadosDasArestas.push(aresta);
     }
 
-    console.log(dadosDosVertices);
-    console.log(dadosDasArestas);
-
     var nodes = new vis.DataSet(dadosDosVertices);
     var edges = new vis.DataSet(dadosDasArestas);
 
     // create a network
+    var container = document.getElementById("grafo");
+    var data = {
+        nodes: nodes,
+        edges: edges,
+    };
+    var options = {
+        physics: {
+            enabled: false,
+        },
+        nodes: {
+            shape: "circle",
+            size: 40,
+            borderWidth: 2,
+            shadow: true
+        },
+        edges: {
+            smooth: {
+                type: "continuous"
+            }
+        }
+    };
+    var network = new vis.Network(container, data, options);
+}
+
+function desenharWelsh(cidades, distancias) {
+    console.log("welsh");
+
+    cidades = eval(cidades);
+    distancias = eval(distancias);
+
+    var dadosDasCidades = new Array();
+    var dadosDasDistancias = new Array();
+
+    for (var i = 0; i < cidades.length; i++) {
+        var cidade = {
+            id: cidades[i].Codigo,
+            label: cidades[i].Identificador,
+            color: cidades[i].Cor,
+            font: { color: "black" }
+        };
+        dadosDasCidades.push(cidade);
+    }
+
+    for (var i = 0; i < distancias.length; i++) {
+        var distancia = {
+            id: i,
+            label: distancias[i].Valor,
+            from: distancias[i].Origem.Codigo,
+            to: distancias[i].Destino.Codigo,
+            color: {
+                color: distancias[i].Cor
+            },
+            arrows: {
+                to: {
+                    enabled: false,
+                    type: "normal"
+                }
+            }
+        };
+        dadosDasDistancias.push(distancia);
+    }
+
+    var nodes = new vis.DataSet(dadosDasCidades);
+    var edges = new vis.DataSet(dadosDasDistancias);
+
+    var container = document.getElementById("grafo");
+    var data = {
+        nodes: nodes,
+        edges: edges,
+    };
+    var options = {
+        physics: {
+            enabled: false,
+        },
+        nodes: {
+            shape: "circle",
+            size: 40,
+            borderWidth: 2,
+            shadow: true
+        },
+        edges: {
+            smooth: {
+                type: "continuous"
+            }
+        }
+    };
+    var network = new vis.Network(container, data, options);
+}
+
+function desenharCaminhosMinimos(cidades, distancias) {
+    console.log("caminhos minimos");
+
+    cidades = eval(cidades);
+    distancias = eval(distancias);
+
+    var dadosDasCidades = new Array();
+    var dadosDasDistancias = new Array();
+
+    for (var i = 0; i < cidades.length; i++) {
+        var cidade = {
+            id: cidades[i].Codigo,
+            label: cidades[i].Identificador,
+            color: cidades[i].Cor,
+            font: { color: "black" }
+        };
+        dadosDasCidades.push(cidade);
+    }
+
+    for (var i = 0; i < distancias.length; i++) {
+        var distancia = {
+            id: i,
+            label: distancias[i].Valor,
+            from: distancias[i].Origem.Codigo,
+            to: distancias[i].Destino.Codigo,
+            color: {
+                color: distancias[i].Cor
+            },
+            background: {
+                enabled: distancias[i].Cor != "#808988",
+                size: 5,
+                color: distancias[i].Cor
+            },
+            arrows: {
+                to: {
+                    enabled: false,
+                    type: "normal"
+                }
+            }
+        };
+        dadosDasDistancias.push(distancia);
+    }
+
+    var nodes = new vis.DataSet(dadosDasCidades);
+    var edges = new vis.DataSet(dadosDasDistancias);
+
     var container = document.getElementById("grafo");
     var data = {
         nodes: nodes,

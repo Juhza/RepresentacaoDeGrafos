@@ -57,7 +57,7 @@ namespace RepresentacaoDeGrafos.Pages
             verticeInicial = new Vertice();
 
             // remover para iniciar zerado
-            // GerarDadosParaTeste();
+            GerarDadosParaTeste();
 
             base.OnInitialized();
         }
@@ -66,14 +66,14 @@ namespace RepresentacaoDeGrafos.Pages
         {
             var mesaDeTestes = new TesteDeGrafo();
 
-            //teste.GerarGrafoParaBuscas(true);
-            //teste.GerarGrafoParaBuscas(false);
+            //mesaDeTestes.GerarGrafoParaBuscas(true);
+            //mesaDeTestes.GerarGrafoParaBuscas(false);
             mesaDeTestes.GerarGrafoParaPrim();
 
             Vertices = mesaDeTestes.Vertices;
             Arestas = mesaDeTestes.Arestas;
         }
-
+        
         protected override Task OnAfterRenderAsync(bool firstRender)
         {
             Renderizar();
