@@ -288,8 +288,8 @@ namespace RepresentacaoDeGrafos.Models
             {
                 Codigo = 0,
                 Identificador = "Curitiba",
-                Latitude = -25.4284,
-                Longitude = -49.2733
+                Latitude = -25.429722,
+                Longitude = -49.271944
             };
 
             var paranagua = new Cidade()
@@ -344,8 +344,8 @@ namespace RepresentacaoDeGrafos.Models
             {
                 Codigo = 7,
                 Identificador = "Cascavel",
-                Latitude = -24.9555,
-                Longitude = -53.4552
+                Latitude = -24.955833,
+                Longitude = -53.455278
             };
 
             var fozDoIguacu = new Cidade()

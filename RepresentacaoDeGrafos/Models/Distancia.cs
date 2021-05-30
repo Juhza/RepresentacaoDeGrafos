@@ -11,7 +11,9 @@ namespace RepresentacaoDeGrafos.Models
 
         public Cidade Destino { get; set; }
 
-        public double Custo { get; set; }
+        public double CustoTotal { get; set; }
+
+        public double PesoDaDistancia { get; set; }
 
         public string Cor { get; set; } = "#808988";
     }

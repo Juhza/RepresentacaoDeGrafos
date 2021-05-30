@@ -214,13 +214,20 @@ namespace RepresentacaoDeGrafos.Pages
         public void RecalcularDistanciasManhattan()
         {
             Cidades.ForEach(cidade =>
-                cidade.DistanciaManhattan = Math.Abs(cidadeFinal.Latitude - cidade.Latitude) + Math.Abs(cidadeFinal.Longitude - cidade.Longitude));
+                cidade.DistanciaManhattan = Math.Round(Math.Abs(cidadeFinal.Latitude - cidade.Latitude) + Math.Abs(cidadeFinal.Longitude - cidade.Longitude), 3));
         }
 
         public void RecalcularGrausDosVertices()
         {
             Cidades.ForEach(cidade => 
                 cidade.Grau = Distancias.Count(d => d.Origem.Identificador == cidade.Identificador || d.Destino.Identificador == cidade.Identificador));
+        }
+
+        public void RecalcularPesoDasDistancias()
+        {
+            Distancias.ForEach(distancia =>
+                distancia.PesoDaDistancia = Math.Round(
+                    Math.Abs(distancia.Origem.Latitude - distancia.Destino.Latitude) + Math.Abs(distancia.Origem.Longitude - distancia.Destino.Longitude), 3));
         }
 
         public void ExecutarAlgoritmoDeWelshPowell()
@@ -269,69 +276,80 @@ namespace RepresentacaoDeGrafos.Pages
         {
             if (string.IsNullOrEmpty(cidadeInicial.Identificador) || string.IsNullOrEmpty(cidadeFinal.Identificador)) return;
 
-            Resultado = string.Empty;
+            EhCaminhosMinimos = true;
             ResetarCoresDoGrafo();
             RecalcularGrausDosVertices();
             RecalcularDistanciasManhattan();
+            RecalcularPesoDasDistancias();
 
             var cidadeAtual = cidadeInicial;
-            var corSelecionada = Cores.FirstOrDefault(cor => cor.Nome == "Laranja");
-            var resultado = new StringBuilder();
-            var teste = 0;
-            var testeCusto = 0.0;
             var distanciaTotalParaACidadeInicial = 0.0;
+            var cidadesPintadas = new List<Cidade>();
+            var distanciasPintadas = new List<Distancia>();
+            var ultimaEncruzilhada = new Cidade();
+            var ligacoesDaCidadeFinal = BuscarLigacoes(cidadeFinal);
 
-            Cidades.ForEach(cidade => Console.WriteLine($"{cidade.Identificador} grau {cidade.Grau}"));
-
-            while (cidadeFinal.Cor != corSelecionada.Hexadecimal && teste < 15)
+            while (!cidadesPintadas.Contains(cidadeFinal))
             {
-                resultado.Append($"{cidadeAtual.Identificador} => ");
-                var ligacoesDaCidadeAtual = Distancias
-                    .Where(distancia => (distancia.Origem == cidadeAtual || distancia.Destino == cidadeAtual) && distancia.Cor != corSelecionada.Hexadecimal)
-                    .ToList();
+                var ligacoesDaCidadeAtual = BuscarLigacoes(cidadeAtual);
+                ligacoesDaCidadeAtual.RemoveAll(distancia => distanciasPintadas.Contains(distancia));
+
+                if (!ligacoesDaCidadeAtual.Any())
+                {
+                    cidadeAtual = ultimaEncruzilhada;
+                    ligacoesDaCidadeAtual = BuscarLigacoes(cidadeAtual);
+                    ligacoesDaCidadeAtual.RemoveAll(distancia => distanciasPintadas.Contains(distancia));
+                }
+
+                if (cidadeAtual.Grau > 1)
+                    ultimaEncruzilhada = cidadeAtual;
 
                 foreach (var ligacao in ligacoesDaCidadeAtual)
                 {
                     var cidadeParaCalcular = ObterCidadeOpostaNaLigacao(ligacao, cidadeAtual);
-                    var distanciaParaACidadeAnterior = Math.Abs(cidadeAtual.Latitude - cidadeParaCalcular.Latitude) + Math.Abs(cidadeInicial.Longitude - cidadeParaCalcular.Longitude);
-                    var distanciaParaACidadeInicial = distanciaParaACidadeAnterior + distanciaTotalParaACidadeInicial;
-                    ligacao.Custo = cidadeParaCalcular.DistanciaManhattan + distanciaParaACidadeInicial;
+                    var distanciaParaACidadeInicial = ligacao.PesoDaDistancia + distanciaTotalParaACidadeInicial;
+                    ligacao.CustoTotal = cidadeParaCalcular.DistanciaManhattan + distanciaParaACidadeInicial;
+
+                    if (ligacoesDaCidadeFinal.Contains(ligacao))
+                    {
+                        distanciasPintadas.Add(ligacao);
+                        cidadesPintadas.Add(cidadeAtual);
+                        cidadesPintadas.Add(cidadeParaCalcular);
+
+                        PintarCidadesELigacoes(cidadesPintadas, distanciasPintadas);
+                        return;
+                    }
                 }
 
-                var teste3 = resultado.ToString();
-                var ligacaoDeMenorCusto = ligacoesDaCidadeAtual.OrderByDescending(ligacao => ligacao.Custo).First();
+                var ligacaoDeMenorCusto = ligacoesDaCidadeAtual.OrderBy(ligacao => ligacao.CustoTotal).First();
                 var proximaCidade = ObterCidadeOpostaNaLigacao(ligacaoDeMenorCusto, cidadeAtual);
 
-                while (((proximaCidade.Grau == 1 && proximaCidade.Identificador != cidadeFinal.Identificador) || proximaCidade.Cor == corSelecionada.Hexadecimal) 
+                while (((proximaCidade.Grau == 1 && proximaCidade.Identificador != cidadeFinal.Identificador) || cidadesPintadas.Contains(proximaCidade)) 
                     && ligacoesDaCidadeAtual.Count > 1)
                 {
                     ligacoesDaCidadeAtual.Remove(ligacaoDeMenorCusto);
-                    var bla = ligacoesDaCidadeAtual.OrderByDescending(ligacao => ligacao.Custo);
-
-                    if (bla.First() == null)
-                    {
-                        Console.WriteLine($"{ligacaoDeMenorCusto.Origem} para {ligacaoDeMenorCusto.Destino}"); 
-                        return;
-                    }
-
-                    ligacaoDeMenorCusto = bla.First();
+                    ligacaoDeMenorCusto = ligacoesDaCidadeAtual.OrderByDescending(ligacao => ligacao.CustoTotal).First();
                     proximaCidade = ObterCidadeOpostaNaLigacao(ligacaoDeMenorCusto, cidadeAtual);
                 }
 
-                distanciaTotalParaACidadeInicial += ligacaoDeMenorCusto.Custo - proximaCidade.DistanciaManhattan;
-                ligacaoDeMenorCusto.Cor = corSelecionada.Hexadecimal;
-                cidadeAtual.Cor = corSelecionada.Hexadecimal;
+                distanciaTotalParaACidadeInicial += ligacaoDeMenorCusto.CustoTotal - proximaCidade.DistanciaManhattan;
+                distanciasPintadas.Add(ligacaoDeMenorCusto);
+                cidadesPintadas.Add(cidadeAtual);
                 cidadeAtual = proximaCidade;
-                testeCusto += ligacaoDeMenorCusto.Custo;
-                teste++;
             }
 
-            resultado.Append(cidadeAtual.Identificador);
-            Resultado += $"{resultado.ToString()} {teste} custo {testeCusto}";
-            EhCaminhosMinimos = false;
+            PintarCidadesELigacoes(cidadesPintadas, distanciasPintadas);
         }
 
         private Cidade ObterCidadeOpostaNaLigacao(Distancia ligacao, Cidade cidadeReferencia) 
             => ligacao.Origem == cidadeReferencia ? ligacao.Destino : ligacao.Origem;
+
+        private void PintarCidadesELigacoes(List<Cidade> cidades, List<Distancia> ligacoes)
+        {
+            var corSelecionada = Cores.FirstOrDefault(cor => cor.Nome == "Laranja");
+
+            cidades.ForEach(cidade => cidade.Cor = corSelecionada.Hexadecimal);
+            ligacoes.ForEach(ligacao => ligacao.Cor = corSelecionada.Hexadecimal);
+        }
     }
 }

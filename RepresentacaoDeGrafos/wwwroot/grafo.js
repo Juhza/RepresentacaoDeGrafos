@@ -69,8 +69,6 @@
 }
 
 function desenharWelsh(cidades, distancias) {
-    console.log("welsh");
-
     cidades = eval(cidades);
     distancias = eval(distancias);
 
@@ -134,8 +132,6 @@ function desenharWelsh(cidades, distancias) {
 }
 
 function desenharCaminhosMinimos(cidades, distancias) {
-    console.log("caminhos minimos");
-
     cidades = eval(cidades);
     distancias = eval(distancias);
 
@@ -153,9 +149,11 @@ function desenharCaminhosMinimos(cidades, distancias) {
     }
 
     for (var i = 0; i < distancias.length; i++) {
+        console.log(distancias[i].PesoDaDistancia);
+
         var distancia = {
             id: i,
-            label: distancias[i].Valor,
+            label: distancias[i].PesoDaDistancia.toString(),
             from: distancias[i].Origem.Codigo,
             to: distancias[i].Destino.Codigo,
             color: {

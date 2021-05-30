@@ -120,26 +120,26 @@
 
 <div>
     <div class="row">
-        <div class="col-5">
+        <div class="col-6">
             <h4>
                 Quantidade de cidades: @Cidades.Count
             </h4>
             @foreach (var c in Cidades)
             {
                 <p class="m-0">
-                    <b>@c.Identificador</b>, @c.Latitude @c.Longitude, distância Manhattan: @c.DistanciaManhattan | 
+                    <b>@c.Identificador</b>, @c.Latitude @c.Longitude, distância Manhattan: @c.DistanciaManhattan, grau: @c.Grau | 
                     <a class="text-danger" style="cursor:pointer" @onclick="() => ExcluirCidade(c)">Excluir</a>
                 </p>
             }
         </div>
         <div class="col">
             <h4>
-                Quantidade de ligações: @Distancias.Count
+                Quantidade de ligações/distâncias: @Distancias.Count
             </h4>
             @foreach (var d in Distancias)
             {
                 <p class="m-0">
-                    De <b>@d.Origem.Identificador</b> para <b>@d.Destino.Identificador</b>, valor: @d.Custo |
+                    De <b>@d.Origem.Identificador</b> para <b>@d.Destino.Identificador</b>, valor: @d.PesoDaDistancia |
                     <a class="text-danger" style="cursor:pointer" @onclick="() => ExcluirLigacaoEntreCidades(d)">Excluir</a>
                 </p>
             }
