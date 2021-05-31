@@ -241,9 +241,9 @@ namespace RepresentacaoDeGrafos.Pages
             var corAtual = Cores.First();
             var cinzaPadrao = "#808988";
 
-            while (Cidades.Any(cidade => cidade.Cor == cinzaPadrao))
+            while (verticesReorganizadosPorGrau.Any(cidade => cidade.Cor == cinzaPadrao))
             {
-                foreach (var cidade in Cidades)
+                foreach (var cidade in verticesReorganizadosPorGrau)
                 {
                     var adjacentes = BuscarCidadesVizinhas(cidade);
                     if (cidade.Cor == cinzaPadrao && !adjacentes.Any(a => a.Cor == corAtual.Hexadecimal))
