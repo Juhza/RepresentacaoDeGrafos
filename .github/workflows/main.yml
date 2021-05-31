@@ -27,3 +27,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         BRANCH: gh-pages
         FOLDER: release/wwwroot
+        
+    # changes the base-tag in index.html from '/' to 'RepresentacaoDeGrafos/RepresentacaoDeGrafos' to match GitHub Pages repository subdirectory
+    - name: Change base-tag in index.html from / to RepresentacaoDeGrafos/RepresentacaoDeGrafos
+      run: sed -i 's/<base href="\/" \/>/<base href="\/RepresentacaoDeGrafos\/RepresentacaoDeGrafos\/" \/>/g' release/wwwroot/index.html
