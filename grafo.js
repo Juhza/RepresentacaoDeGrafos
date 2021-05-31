@@ -149,8 +149,6 @@ function desenharCaminhosMinimos(cidades, distancias) {
     }
 
     for (var i = 0; i < distancias.length; i++) {
-        console.log(distancias[i].PesoDaDistancia);
-
         var distancia = {
             id: i,
             label: distancias[i].PesoDaDistancia.toString(),
