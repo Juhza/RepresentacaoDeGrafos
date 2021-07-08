@@ -20,8 +20,6 @@ namespace RepresentacaoDeGrafos.Pages
 
         public string MensagemDeErro { get; set; }
 
-        public string Resultado { get; set; }
-
         public List<Cidade> Cidades { get; set; }
 
         public List<Distancia> Distancias { get; set; }

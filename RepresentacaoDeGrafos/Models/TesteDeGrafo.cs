@@ -494,5 +494,187 @@ namespace RepresentacaoDeGrafos.Models
             Distancias.Add(ligacao12);
             Distancias.Add(ligacao13);
         }
+
+        public void GerarGrafoParaProblemaDoCaixeiroViajante()
+        {
+            var origem = new Vertice()
+            {
+                Codigo = 0,
+                Identificador = "Sede"
+            };
+
+            var clienteA = new Vertice()
+            {
+                Codigo = 1,
+                Identificador = "Cliente A"
+            };
+
+            var clienteB = new Vertice()
+            {
+                Codigo = 2,
+                Identificador = "Cliente B"
+            };
+
+            var clienteC = new Vertice()
+            {
+                Codigo = 3,
+                Identificador = "Cliente C"
+            };
+
+            var clienteD = new Vertice()
+            {
+                Codigo = 4,
+                Identificador = "Cliente D"
+            };
+
+            var clienteE = new Vertice()
+            {
+                Codigo = 5,
+                Identificador = "Cliente E"
+            };
+
+            Vertices.Add(origem);
+            Vertices.Add(clienteA);
+            Vertices.Add(clienteB);
+            Vertices.Add(clienteC);
+            Vertices.Add(clienteD);
+            Vertices.Add(clienteE);
+
+            var aresta0 = new Aresta()
+            {
+                Codigo = 0,
+                Custo = 10,
+                Antecessor = clienteA,
+                Sucessor = clienteB
+            };
+
+            var aresta1 = new Aresta()
+            {
+                Codigo = 1,
+                Custo = 7,
+                Antecessor = clienteB,
+                Sucessor = clienteC
+            };
+
+            var aresta2 = new Aresta()
+            {
+                Codigo = 2,
+                Custo = 8,
+                Antecessor = clienteC,
+                Sucessor = clienteD
+            };
+
+            var aresta3 = new Aresta()
+            {
+                Codigo = 3,
+                Custo = 10,
+                Antecessor = clienteD,
+                Sucessor = clienteE
+            };
+
+            var aresta4 = new Aresta()
+            {
+                Codigo = 4,
+                Custo = 10,
+                Antecessor = clienteE,
+                Sucessor = clienteA
+            };
+
+            var aresta5 = new Aresta()
+            {
+                Codigo = 5,
+                Custo = 18,
+                Antecessor = clienteA,
+                Sucessor = clienteD
+            };
+
+            var aresta6 = new Aresta()
+            {
+                Codigo = 6,
+                Custo = 12,
+                Antecessor = clienteA,
+                Sucessor = clienteC
+            };
+
+            var aresta7 = new Aresta()
+            {
+                Codigo = 7,
+                Custo = 12,
+                Antecessor = clienteB,
+                Sucessor = clienteE
+            };
+
+            var aresta8 = new Aresta()
+            {
+                Codigo = 8,
+                Custo = 12,
+                Antecessor = clienteB,
+                Sucessor = clienteD
+            };
+
+            var aresta9 = new Aresta()
+            {
+                Codigo = 9,
+                Custo = 12,
+                Antecessor = clienteC,
+                Sucessor = clienteE
+            };
+
+            var aresta10 = new Aresta()
+            {
+                Codigo = 10,
+                Custo = 10,
+                Antecessor = origem,
+                Sucessor = clienteA
+            };
+
+            var aresta11 = new Aresta()
+            {
+                Codigo = 11,
+                Custo = 5,
+                Antecessor = origem,
+                Sucessor = clienteB
+            };
+
+            var aresta12 = new Aresta()
+            {
+                Codigo = 12,
+                Custo = 5,
+                Antecessor = origem,
+                Sucessor = clienteC
+            };
+
+            var aresta13 = new Aresta()
+            {
+                Codigo = 13,
+                Custo = 10,
+                Antecessor = origem,
+                Sucessor = clienteD
+            };
+
+            var aresta14 = new Aresta()
+            {
+                Codigo = 14,
+                Custo = 10,
+                Antecessor = origem,
+                Sucessor = clienteE
+            };
+
+            Arestas.Add(aresta0);
+            Arestas.Add(aresta1);
+            Arestas.Add(aresta2);
+            Arestas.Add(aresta3);
+            Arestas.Add(aresta4);
+            Arestas.Add(aresta5);
+            Arestas.Add(aresta6);
+            Arestas.Add(aresta7);
+            Arestas.Add(aresta8);
+            Arestas.Add(aresta9);
+            Arestas.Add(aresta10);
+            Arestas.Add(aresta11);
+            Arestas.Add(aresta12);
+            Arestas.Add(aresta13);
+            Arestas.Add(aresta14);
+        }
     }
 }

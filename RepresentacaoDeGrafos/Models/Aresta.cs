@@ -10,20 +10,15 @@ namespace RepresentacaoDeGrafos.Models
     {
         public int Codigo { get; set; }
 
-        [Required]
         public string Identificador { get; set; }
 
-        [Required]
         public Vertice Antecessor { get; set; }
 
-        [Required]
         public Vertice Sucessor { get; set; }
 
-        [Required]
         [Range(1, 1000)]
         public int Custo { get; set; }
 
-        [Required]
         public bool EhOrientado { get; set; }
 
         public string Cor { get; set; } = "#808988";

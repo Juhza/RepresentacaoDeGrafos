@@ -1,0 +1,117 @@
+﻿@inject IJSRuntime js
+
+<MensagemDeErro Mensagem="@MensagemDeErro"></MensagemDeErro>
+
+<div class="mb-4 p-3 border rounded">
+    <h5>Adicionar vertice</h5>
+
+    <EditForm Model="@Vertice" OnValidSubmit="AdicionarVertice">
+        <DataAnnotationsValidator></DataAnnotationsValidator>
+
+        <div class="row g-3">
+            <div class="col">
+                <InputText class="form-control" placeholder="Identificador" aria-label="Identificador" @bind-Value="Vertice.Identificador"></InputText>
+            </div>
+            <div class="col-2">
+                <input class="btn btn-outline-dark w-100" type="submit" value="Adicionar">
+            </div>
+        </div>
+
+    </EditForm>
+</div>
+
+<div class="mb-4 p-3 border rounded">
+    <h5>Adicionar aresta</h5>
+
+    <EditForm Model="@Aresta" OnValidSubmit="AdicionarAresta">
+        <DataAnnotationsValidator></DataAnnotationsValidator>
+
+        <div class="row g-3 mb-3">
+            <div class="col">
+                <InputSelect class="form-control" aria-label="Antecessor"  @bind-Value="Antecessor">
+                    <option selected></option>
+                    @foreach (var vertice in Vertices)
+                    {
+                        <option value="@vertice.Identificador">@vertice.Identificador</option>
+                    }
+                </InputSelect>
+            </div>
+            <div class="col">
+                <InputSelect class="form-control" aria-label="Sucessor" @bind-Value="Sucessor">
+                    <option selected></option>
+                    @foreach (var vertice in Vertices)
+                    {
+                        <option value="@vertice.Identificador">@vertice.Identificador</option>
+                    }
+                </InputSelect>
+            </div>
+        </div>
+        <div class="row g-3">
+            <div class="col">
+                <InputNumber class="form-control" aria-label="Custo" @bind-Value="Aresta.Custo"></InputNumber>
+            </div>
+            <div class="col-2">
+                <input class="btn btn-outline-dark w-100" type="submit" value="Adicionar">
+            </div>
+        </div>
+    </EditForm>
+</div>
+
+<div class="mb-4 p-3 border rounded">
+    <div class="col">
+        <input class="btn btn-outline-dark w-100" type="button" value="Aplicar Algoritmo das Economias" @onclick="AplicarAlgoritmoDasEconomias">
+    </div>
+    <div class="col">
+        <input class="btn btn-outline-dark w-100" type="button" value="Teste" @onclick="Teste">
+    </div>
+</div>
+
+<div class="w-100 d-flex justify-content-center">
+    <div id="grafo"></div>
+</div>
+
+<div class="w-100 d-flex justify-content-center">
+    <p>
+        @CustoTotal
+    </p>
+</div>
+
+<div>
+    <div class="row">
+        <div class="col-4">
+            <h4>
+                Quantidade de vértices: @Vertices.Count
+            </h4>
+            @foreach (var v in Vertices)
+            {
+                <p class="m-0">
+                    <b>@v.Identificador</b> |
+                    <a class="text-danger" style="cursor:pointer" @onclick="() => RemoverVertice(v)">Excluir</a>
+                </p>
+            }
+        </div>
+        <div class="col-4">
+            <h4>
+                Quantidade de arestas: @Arestas.Count
+            </h4>
+            @foreach (var a in Arestas)
+            {
+                <p class="m-0">
+                    De <b>@a.Antecessor.Identificador</b> para <b>@a.Sucessor.Identificador</b>, valor: @a.Custo |
+                    <a class="text-danger" style="cursor:pointer" @onclick="() => RemoverAresta(a)">Excluir</a>
+                </p>
+            }
+        </div>
+        <div class="col-4">
+            <h4>
+                Quantidade de economias: @Economias.Count
+            </h4>
+            @foreach (var e in Economias)
+            {
+                <p class="m-0">
+                    i: @e.ArestaIJ.Antecessor.Identificador, j: @e.ArestaIJ.Sucessor.Identificador, k: @e.ArestaKI.Antecessor.Identificador, c: @e.Valor
+                </p>
+            }
+        </div>
+    </div>
+</div>
