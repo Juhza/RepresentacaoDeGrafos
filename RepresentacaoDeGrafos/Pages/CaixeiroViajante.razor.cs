@@ -181,7 +181,7 @@ namespace RepresentacaoDeGrafos.Pages
             Arestas.Remove(aresta);
         }
 
-        public void Teste()
+        public void PintarArestasDeIdaEVolta()
         {
             var arestasDaOrigem = Arestas.Where(a => a.Antecessor.Identificador == "Sede").ToList();
             var corLaranja = Cores.First(c => c.Nome == "Laranja");
@@ -205,73 +205,66 @@ namespace RepresentacaoDeGrafos.Pages
 
         public void AplicarAlgoritmoDasEconomias()
         {
-            var distanciaMaxima = 30;
             var sede = Vertices.First(v => v.Identificador == "Sede");
+            var corAtual = Cores.First(c => c.Nome == "Vermelho");
 
-            // k sempre vai ser a sede
-            // obter lista de economias
-            // é uma economia se o vértice i for ligado ao véstice j sem passar por k
-            // comparar com o custo de ida e volta
-
-            var corVermelha = Cores.First(c => c.Nome == "Vermelho");
-            var corVerde = Cores.First(c => c.Nome == "Verde");
-            var corPadrao = Cores.First();
-            var custoTotal = 0;
+            const int distanciaMaxima = 30;
+            var maiorCustoDeArestaParaASede = Arestas.Where(a => a.Antecessor == sede).OrderByDescending(a => a.Custo).First().Custo;
 
             var economias = ObterListaDeEconomias();
+            var verticesPassados = new List<Vertice>();
 
-            while (economias.Any()) //var i = 0; i < 3; i++
+            while (economias.Any())
             {
                 var economiaAtual = economias.First();
                 var valorTotalIndoEVoltandoParaSede = economiaAtual.ArestaJK.Custo * 2 + economiaAtual.ArestaKI.Custo * 2;
                 var valorPegandoAtalho = economiaAtual.ArestaIJ.Custo + economiaAtual.ArestaJK.Custo + economiaAtual.ArestaKI.Custo;
 
-                js.InvokeVoidAsync("printarDado", valorTotalIndoEVoltandoParaSede);
-                js.InvokeVoidAsync("printarDado", valorPegandoAtalho);
-                js.InvokeVoidAsync("printarDado", valorTotalIndoEVoltandoParaSede > valorPegandoAtalho);
-
                 if (valorTotalIndoEVoltandoParaSede > valorPegandoAtalho)
                 {
-                    economiaAtual.ArestaIJ.Cor = corVermelha.Hexadecimal;
+                    CustoTotal += economiaAtual.ArestaIJ.Custo;
 
-                    /*var arestasParaExcluir = Arestas.Where(a =>
-                        sucessor == sede && (a.Antecessor == economiaAtual.ArestaIJ.Antecessor || a.Antecessor == economiaAtual.ArestaIJ.Sucessor));
+                    economiaAtual.ArestaIJ.Cor = corAtual.Hexadecimal;
 
-                    var arestasDaSede = Arestas.Where(a => (a.Sucessor == sede || a.Antecessor == sede)).ToList();
-                    var primeiraArestaParaRemover = arestasDaSede.First(a => a.Antecessor == economiaAtual.ArestaIJ.Antecessor || a.Sucessor == economiaAtual.ArestaIJ.Antecessor);
-                    var segundaArestaParaRemover = arestasDaSede.First(a => a.Antecessor == economiaAtual.ArestaIJ.Sucessor || a.Sucessor == economiaAtual.ArestaIJ.Sucessor);
+                    if (verticesPassados.Contains(economiaAtual.ArestaIJ.Antecessor) || verticesPassados.Contains(economiaAtual.ArestaIJ.Sucessor))
+                    {
+                        var verticeReferencia = verticesPassados.Contains(economiaAtual.ArestaIJ.Antecessor) ? economiaAtual.ArestaIJ.Antecessor : economiaAtual.ArestaIJ.Sucessor;
+                        var arestasASeremRemovidas = Arestas.Where(a => a.Antecessor == verticeReferencia || a.Sucessor == verticeReferencia);
+                        economias.RemoveAll(a => arestasASeremRemovidas.Contains(a.ArestaIJ));
+                    }
 
-                    Arestas.Remove(primeiraArestaParaRemover);
-                    Arestas.Remove(segundaArestaParaRemover);*/
+                    verticesPassados.Add(economiaAtual.ArestaIJ.Antecessor);
+                    verticesPassados.Add(economiaAtual.ArestaIJ.Sucessor);
                 }
                 else
                 {
-                    economiaAtual.ArestaJK.Cor = corVermelha.Hexadecimal;
-                    economiaAtual.ArestaKI.Cor = corVermelha.Hexadecimal;
+                    CustoTotal += valorTotalIndoEVoltandoParaSede;
+
+                    economiaAtual.ArestaJK.Cor = corAtual.Hexadecimal;
+                    economiaAtual.ArestaKI.Cor = corAtual.Hexadecimal;
+
+                    var arestaJKContraria = Arestas.First(a => a.Antecessor == economiaAtual.ArestaJK.Sucessor && a.Sucessor == economiaAtual.ArestaJK.Antecessor);
+                    arestaJKContraria.Cor = corAtual.Hexadecimal;
+
+                    var arestaKIContraria = Arestas.First(a => a.Antecessor == economiaAtual.ArestaKI.Sucessor && a.Sucessor == economiaAtual.ArestaKI.Antecessor);
+                    arestaKIContraria.Cor = corAtual.Hexadecimal;
                 }
 
                 Economias.Add(economiaAtual);
                 economias.Remove(economiaAtual);
             }
-            
-            CustoTotal = custoTotal;
         }
 
         private List<Economia> ObterListaDeEconomias()
         {
             var economias = new List<Economia>();
-
             var sede = Vertices.First(v => v.Identificador == "Sede");
             var arestasLigadasASede = Arestas.Where(a => a.Antecessor == sede || a.Sucessor == sede);
-            var verticesLigadosASede = arestasLigadasASede.Select(v => v.Antecessor == sede ? v.Sucessor : v.Antecessor);
-            var arestasQuePodemSerEconomias = Arestas.Where(a => a.Antecessor != sede && a.Sucessor != sede);
 
             foreach (var aresta in Arestas)
             {
                 var i = aresta.Antecessor;
                 var j = aresta.Sucessor;
-
-                // tem q sempre dar 2 arestas
                 var arestasAPartirDaSede = arestasLigadasASede.Where(a => a.Antecessor == i || a.Sucessor == i || a.Antecessor == j || a.Sucessor == j);
 
                 var economia = new Economia()
